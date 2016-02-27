@@ -12,8 +12,9 @@ if __name__ == '__main__':
 
 	baseUrl = 'https://www.southwest.com'
 	infoUrl = '/flight/view-air-reservation.html?confirmationNumberFirstName='+firstName+'&confirmationNumberLastName='+lastName+'&confirmationNumber='+confirmation
-	checkinUrl = urlparse.urljoin(baseUrl, '/flight/retrieveCheckinDoc.html')
 	retrieveUrl = urlparse.urljoin(baseUrl, infoUrl)
+	dataUrl = '/flight/retrieveCheckinDoc.html?firstName='+firstName+'&lastName='+lastName+'&confirmationNumber='+confirmation
+	checkinUrl = urlparse.urljoin(baseUrl, dataUrl)
 
 	req = urllib2.Request(url=retrieveUrl)
 	opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
@@ -21,15 +22,39 @@ if __name__ == '__main__':
 	swData = resp.read()
 
 	soup = BeautifulSoup(swData, "html.parser")
-	flights = []
 	for flight in soup.find_all("tr"):
 		day = None
 		for date in flight.find_all("span", { "class" : "itinerary-table--summary-travel-date"}):
-			day = timeModule.strptime(date.string, '%A, %B %d, %Y')
+			# TODO timezone flight.find_all("div", {"class" : "itinerary-table--segment-flight-stops routingDetailsStops"})[::2]:
+			for time in flight.find_all("span", { "class" : "nowrap" })[::2]:
+				day = datetime.fromtimestamp(timeModule.mktime(timeModule.strptime(date.string+' '+time.string, '%A, %B %d, %Y %I:%M %p')))
 		if day == None:
 			continue
-		print day
-		#for time in flight.find_all("span", { "class" : "nowrap" })[::2]:
-		#	print time.string
-		#for depart in flight.find_all("div", {"class" : "itinerary-table--segment-flight-stops routingDetailsStops"})[::2]:
-		#	print depart.string
+		day = day - timedelta(days=1)
+		#if day.date() == datetime.today().date(): TODO
+		break
+
+	print 'Checking in on ' + day.strftime('%B %d') + ' at ' + day.strftime('%I:%M %p')
+	waitTime = day - datetime.today()
+
+	#if (waitTime.total_seconds()>10):
+	#	print 'Waiting for '+  str(waitTime)
+	#	timeModule.sleep(waitTime.total_seconds())
+	#waitTime = day - datetime.today()
+	#print 'Waiting for '+  str(waitTime)
+	#timeModule.sleep(waitTime.total_seconds())
+	# TODO: add back, does sleep work well
+
+	req = urllib2.Request(url=checkinUrl)
+	opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+	resp = opener.open(req)
+	swData = resp.read()
+	print swData #TODO remove
+
+	soup = BeautifulSoup(swData, "html.parser")
+	# TODO keep going
+
+
+
+
+	
