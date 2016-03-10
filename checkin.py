@@ -58,7 +58,7 @@ if __name__ == '__main__':
 				break
 
 	br.select_form(name="checkinOptions")
-	req = br.submit(name="printDocuments")
+	br.submit(name="printDocuments")
 	soup = BeautifulSoup(br.response().read(), "html.parser")
 	position = soup.find_all('span', {"class" :"boardingInfo"})
 	print 'Boarding Position: ' + position[0].string + position[1].string
