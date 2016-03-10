@@ -1,10 +1,10 @@
 # Southwest Checkin
-Python script to automate Southwest flight checkin
+Python script to automate Southwest flight checkin. Currently, this script does not support checking in from different a different time zone.
 
 ## Installation
 1. Download checkin.py
 2. Install Beautiful Soup
-3. Install pytz
+3. Install Mechanize
 
 ## Use
 1. Open terminal
