@@ -6,7 +6,7 @@ Python script to automate Southwest flight checkin. Currently, this script does 
 2. Install Beautiful Soup
 3. Install Mechanize
 
-## Use
+## Usage
 1. Open terminal
 2. Navigate to directory with checkin.py
 3. Before the checkin window, type 'python checkin.py' into the terminal
